@@ -1,0 +1,46 @@
+.app__header{
+    padding: 10px;
+    background-color:lightblue;
+  }
+  
+  .header__title{
+    font-weight: 600;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif
+  }
+  
+  .table__column{
+      
+    border-left: 1px solid gray;
+    align-items: center;
+    justify-content:center;
+  }
+  
+  .table__content{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  
+  .instructions{
+    margin-top: 20px;
+    padding: 20px;
+  }
+  
+  .instruction__set{
+    margin-top:2rem;
+    margin-left:2rem;
+  }
+  
+  .agreement{
+    margin-top: 2rem;
+    margin-left:1rem;
+    width:100%;
+  }
+  
+  .agreement> Button{
+    margin-top: 3rem;
+    font-weight: 700;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-left: 40%;
+  }
+  
