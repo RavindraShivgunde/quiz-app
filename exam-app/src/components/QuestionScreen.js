@@ -1,25 +1,30 @@
 import './QuestionScreen.css'
 import axios from 'axios'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 function QuestionScreen() {
+
     const [questions, setQuestions] = useState([]);
+    const [remainingQue, setRemainingQue] = useState(11) ;
     const [currQuestion, setCurrQuestion] = useState(0);
     const [questionNumber, setQuestionNumber] = useState(1);
-    
-    const [radioButton,setRadioButton] = useState(false)
-    
-    const [selectedAns, setSelectedAns] = useState('');
 
-    const [answers,setAnswers] = useState([])
-    console.log("All answers are", answers)
- 
-    console.log("selected Answer is:", selectedAns);
+
+    const [radioButton, setRadioButton] = useState(false)
+    const [selectedAns, setSelectedAns] = useState([]);
+    const [answers, setAnswers] = useState([])
     const [correctAns, setCorrectAns] = useState([]);
     const [score, setScore] = useState(0)
+
+    
+
+    const [checkboxAns, setCheckboxAns] = useState([])
+
+    console.log("Checkbox answers are", checkboxAns)
+    console.log("All answers are", answers)
+    console.log("selected Answer is:", selectedAns);
     console.log("score is:", score)
 
-    const [remainingQue, setRemainingQue] = useState(12);
     // const [index,setIndex]=useState(0)
 
     // const [options,setOptions] = useState([])
@@ -33,36 +38,88 @@ function QuestionScreen() {
             .then((res) => {
                 setQuestions(res?.data?.data[0]?.question);
                 setCorrectAns(res?.data?.data[0]?.correctAns);
+                // console.log('response from the api is', res?.data?.data[0]);
                 // setOptions(questions[currQuestion].option)
             })
             .catch((err) => console.log(err))
-
     }
+
+    
 
     useEffect(() => {
         getQuestions();
     }, [])
 
-    const handleNext = () => {
-        // if(selectedAns === '') {
-        //     return setError("Please select an option")
-        // }
-        // (currQuestion < questions.length) &&
-        // (selectedAns ? ()  : (alert("Please select an option")))
-        setRadioButton(false);
-        
-        if (selectedAns !== "") { setAnswers([...answers, selectedAns]);}
-        setSelectedAns('');
 
-        if (currQuestion < questions.length - 1 ) {
+
+
+    const handleNext = () => {
+        
+        // if () {
+            
+        // }
+        // else {
+            
+        // }
+        var radio = document.querySelectorAll(
+            "input[type=radio][name=radio]:checked"
+        );
+
+        var checkbox = document.querySelector(
+            "input[type=checkbox][name=option]:checked"
+        );
+        
+        if (radio && selectedAns ) {
+            
+            radio.checked = false;
+            setAnswers([...answers, selectedAns]);
+        }
+
+        
+        else if (checkbox && checkboxAns) {
+            
+            checkbox.checked = false;
+            setAnswers([...answers, checkboxAns]);
+        }
+        
+        
+        
+
+        // if (radio && selectedAns && selectedAns !== []) {
+            
+            
+            
+        // }
+
+        // else if (checkbox && checkboxAns && checkboxAns !== []) {
+            
+            
+            
+            
+        // }
+
+        // setRadioButton(false);
+        
+        setSelectedAns([]);
+        setCheckboxAns([]);
+
+        if (currQuestion < questions.length - 1) {
             setCurrQuestion(currQuestion + 1);
             setQuestionNumber(questionNumber + 1);
-            setRemainingQue(remainingQue - 1);
-            
-            setSelectedAns('');
+            setRemainingQue(remainingQue -1 );
+            // setRemainingQue(remainingQue - 1);
+
+            // if(selectedAns === '') {
+            //     return setError("Please select an option")
+            // }
+            // (currQuestion < questions.length) &&
+            // (selectedAns ? ()  : (alert("Please select an option")))    
 
             if (correctAns[currQuestion] == selectedAns) {
-                setScore(score + 1);
+                setScore(score + 10);
+            }
+            else {
+                setScore(score - 5);
             }
             // setSelectedAns();
             // setDisplayQuestion(questions[currQuestion]);
@@ -96,7 +153,7 @@ function QuestionScreen() {
                 <div className="questionScreen__body1">
                     <div>
                         <h4>Completed : 0</h4>
-                        <h4>{`Remaining : ${remainingQue}`}</h4>
+                        <h4>{`Remaining : ${questions?  (remainingQue) : ('')}`}</h4>
 
                     </div>
                     <div>
@@ -124,27 +181,25 @@ function QuestionScreen() {
                         {
                             questions[currQuestion]?.questionType === "singe Ans" ? (
                                 questions[currQuestion]?.option?.map((option, i) => {
-                                    console.log("option is",option);
-                                    console.log("i is",i)
-                                    return(
-                                    <div className="option__names" key={i}>
-                                        <input  
-                                        type="radio" 
-                                        key={i}
-                                        id="option"
-                                        name="option" 
-                                        value={selectedAns[i]} 
-                                        checked={radioButton[i]}
-                                        onClick={() => setRadioButton(true)}
-                                        onChange={(e) => {setSelectedAns(i+1)}}
-                                        >
-                                        </input>
-                                        <label >{option}</label>
-                                    </div>)
+                                    return (
+                                        <div className="option__names" key={i}>
+                                            <input
+                                                type="radio"
+                                                key={i}
+                                                id="option"
+                                                name="radio"
+                                                value={selectedAns[i]}
+                                                // checked={radioButton[i]}
+                                                // onClick={() => setRadioButton(true)}
+                                                onChange={(e) => { setSelectedAns(i + 1) }}
+                                            >
+                                            </input>
+                                            <label >{option}</label>
+                                        </div>)
                                 })) : (
                                 questions[currQuestion]?.option?.map((option, i) => (
                                     <div className="option__names" key={i}>
-                                        <input type="checkbox" name="option" value={selectedAns[i]} checked={radioButton[i]}onChange={() => setSelectedAns(i+1)}></input>
+                                        <input type="checkbox" key={i} name="option" value={checkboxAns[i]} onChange={() => { setCheckboxAns([...checkboxAns , i+1]) }}></input>
                                         <label>{option}</label>
                                     </div>
                                 )))
