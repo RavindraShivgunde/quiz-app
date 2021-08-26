@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 function QuestionScreen() {
 
     const [questions, setQuestions] = useState([]);
-    const [remainingQue, setRemainingQue] = useState(11) ;
+    const [remainingQue, setRemainingQue] = useState(11);
     const [currQuestion, setCurrQuestion] = useState(0);
     const [questionNumber, setQuestionNumber] = useState(1);
 
@@ -16,10 +16,12 @@ function QuestionScreen() {
     const [correctAns, setCorrectAns] = useState([]);
     const [score, setScore] = useState(0)
 
-    
+    // const [error, setError] = useState('');
 
     const [checkboxAns, setCheckboxAns] = useState([])
 
+
+    // console.log('error is', error)
     console.log("Checkbox answers are", checkboxAns)
     console.log("All answers are", answers)
     console.log("selected Answer is:", selectedAns);
@@ -44,76 +46,90 @@ function QuestionScreen() {
             .catch((err) => console.log(err))
     }
 
-    
-
     useEffect(() => {
         getQuestions();
     }, [])
 
 
-
-
-    const handleNext = () => {
-        
-        // if () {
-            
-        // }
-        // else {
-            
-        // }
-        var radio = document.querySelectorAll(
-            "input[type=radio][name=radio]:checked"
-        );
-
+    useEffect(() => {
         var checkbox = document.querySelector(
             "input[type=checkbox][name=option]:checked"
         );
-        
-        if (radio && selectedAns ) {
-            
-            radio.checked = false;
-            setAnswers([...answers, selectedAns]);
-        }
-
-        
-        else if (checkbox && checkboxAns) {
-            
+        var radio = document.querySelector(
+            "input[type=radio][name=option]:checked"
+        );
+        if (checkbox) {
             checkbox.checked = false;
-            setAnswers([...answers, checkboxAns]);
         }
-        
-        
-        
+        else if (radio) {
+            radio.checked = false;
+        }
+    }, [currQuestion])
 
-        // if (radio && selectedAns && selectedAns !== []) {
-            
-            
-            
-        // }
+    const handleClearResponse = () => {
+        var checkbox = document.querySelector(
+            "input[type=checkbox][name=option]:checked"
+        );
+        var radio = document.querySelector(
+            "input[type=radio][name=option]:checked"
+        );
+        if (checkbox) {
+            checkbox.checked = false;
+            setCheckboxAns([])
+        }
+        else if (radio) {
+            radio.checked = false;
+            setSelectedAns([])
+        }
+    }
 
-        // else if (checkbox && checkboxAns && checkboxAns !== []) {
-            
-            
-            
-            
-        // }
+    const disabled = (e) => {
+        e.preventDefault()
+    }
 
-        // setRadioButton(false);
-        
-        setSelectedAns([]);
-        setCheckboxAns([]);
-
+    const handleSkip = () => {
         if (currQuestion < questions.length - 1) {
             setCurrQuestion(currQuestion + 1);
             setQuestionNumber(questionNumber + 1);
-            setRemainingQue(remainingQue -1 );
-            // setRemainingQue(remainingQue - 1);
+            setRemainingQue(remainingQue - 1);
+            setSelectedAns('');
+            setCheckboxAns('');
+        }
+    }
 
-            // if(selectedAns === '') {
-            //     return setError("Please select an option")
-            // }
-            // (currQuestion < questions.length) &&
-            // (selectedAns ? ()  : (alert("Please select an option")))    
+    const handleNext = () => {
+
+        // if (currQuestion < questions.length) {
+        //     if ( selectedAns == '') {
+        //         return setError('Please Select an option!')
+        //     }
+
+        //     else if ( checkboxAns == '') {
+        //         return setError('Please select the options! ')
+        //     }
+        var checkbox = document.querySelector(
+            "input[type=checkbox][name=option]:checked"
+        );
+        var radio = document.querySelector(
+            "input[type=radio][name=option]:checked"
+        );
+
+        if (radio && selectedAns) {
+            // setError('')
+            setAnswers([...answers, selectedAns]);
+            setSelectedAns([]);
+        }
+
+        else if (checkbox && checkboxAns) {
+            // setError('')
+            setAnswers([...answers, checkboxAns]);
+            setCheckboxAns([]);
+        }
+        // }
+        if (currQuestion < questions.length - 1) {
+            setCurrQuestion(currQuestion + 1);
+            setQuestionNumber(questionNumber + 1);
+            setRemainingQue(remainingQue - 1);
 
             if (correctAns[currQuestion] == selectedAns) {
                 setScore(score + 10);
@@ -121,16 +137,15 @@ function QuestionScreen() {
             else {
                 setScore(score - 5);
             }
-            // setSelectedAns();
-            // setDisplayQuestion(questions[currQuestion]);
-            // console.log("NextQuestion",displayQuestion);
-        } else {
+        }
+        else {
             return
         }
     }
 
     return (
         <div className="questionScreen">
+            {/* {error && alert(error)} */}
             <div className="questionScreen__left">
                 <div className="questionScreen__header">
                     <div className="header__left">
@@ -153,9 +168,10 @@ function QuestionScreen() {
                 <div className="questionScreen__body1">
                     <div>
                         <h4>Completed : 0</h4>
-                        <h4>{`Remaining : ${questions?  (remainingQue) : ('')}`}</h4>
+                        <h4>{`Remaining : ${questions ? (remainingQue) : ('')}`}</h4>
 
                     </div>
+
                     <div>
                         <h4>Marked : 0</h4>
                         <h4>Question time : 15</h4>
@@ -165,7 +181,7 @@ function QuestionScreen() {
                 <div className="questionScreen__body2">
                     <h4 className="text__white">{`Que. ${questionNumber}`}</h4>
                     <h4 className="text__blue">Mark for Review</h4>
-                    <h4 className="text__white">Correct Marks : +4 ; Negative Marks : -1</h4>
+                    <h4 className="text__white">Correct Marks : +10 ; Negative Marks : -5</h4>
                 </div>
 
                 <div className="questionScreen__body3">
@@ -177,6 +193,7 @@ function QuestionScreen() {
                         ) : (<h3>Loading...</h3>)
                         }
                     </div>
+
                     <div className="options">
                         {
                             questions[currQuestion]?.questionType === "singe Ans" ? (
@@ -187,23 +204,25 @@ function QuestionScreen() {
                                                 type="radio"
                                                 key={i}
                                                 id="option"
-                                                name="radio"
+                                                name="option"
                                                 value={selectedAns[i]}
-                                                // checked={radioButton[i]}
-                                                // onClick={() => setRadioButton(true)}
+                                                checked={radioButton[i]}
+                                                onClick={() => setRadioButton(true)}
                                                 onChange={(e) => { setSelectedAns(i + 1) }}
                                             >
                                             </input>
                                             <label >{option}</label>
-                                        </div>)
+                                        </div>
+                                    )
                                 })) : (
                                 questions[currQuestion]?.option?.map((option, i) => (
                                     <div className="option__names" key={i}>
-                                        <input type="checkbox" key={i} name="option" value={checkboxAns[i]} onChange={() => { setCheckboxAns([...checkboxAns , i+1]) }}></input>
+                                        <input type="checkbox" key={i} name="option" value={checkboxAns[i]} onChange={() => { setCheckboxAns([...checkboxAns, i + 1]) }}></input>
                                         <label>{option}</label>
                                     </div>
                                 )))
                         }
+
 
                         {/*                         
                                 // <>
@@ -232,14 +251,34 @@ function QuestionScreen() {
                     </div>
                 </div>
 
-                <div className="questionScreen__body4">
-                    <div>
-                        <h3>Clear Response</h3>
+                {questions[currQuestion]?.questionType === "singe Ans" ? (
+                    <div className="questionScreen__body4">
+                        <div>
+                            <h3 className={`${(selectedAns == '') ? 'disabled__button' : 'next__button'} `} onClick={handleClearResponse}>Clear Response</h3>
+                        </div>
+                        <div>
+                            <h3 className="next__button" onClick={handleSkip}>Skip</h3>
+                        </div>
+                        <div onClick={selectedAns == '' ? disabled : handleNext} className={`${(selectedAns == '') ? 'disabled__button' : 'next__button'} `}>
+                            <h3>Save and Next</h3>
+                        </div>
                     </div>
-                    <div onClick={handleNext} className="next__button">
-                        <h3>Save and Next</h3>
+                ) : (
+                    <div className="questionScreen__body4">
+                        
+                            <div>
+                                <h3 className={`${(checkboxAns == '') ? 'disabled__button' : 'next__button'} `} onClick={handleClearResponse}>Clear Response</h3>
+                            </div>
+                            <div>
+                                <h3 className="next__button" onClick={handleSkip}>Skip</h3>
+                            </div>
+                            <div onClick={checkboxAns == '' ? disabled : handleNext} className={`${(checkboxAns == '') ? 'disabled__button' : 'next__button'} `}>
+                                <h3>Save and Next</h3>
+                            </div>
+                        
                     </div>
-                </div>
+                )}
+
 
 
             </div>

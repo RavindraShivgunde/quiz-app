@@ -189,3 +189,13 @@ h4{
     cursor:pointer;
     text-decoration:underline;
 }
+
+.next__button{
+    cursor:pointer;
+    color:white;
+}
+
+.disabled__button{
+    color: gray;
+    cursor:not-allowed;
+}
